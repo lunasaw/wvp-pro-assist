@@ -94,7 +94,9 @@ public class FFmpegExecUtils implements InitializingBean{
             BufferedWriter bw =new BufferedWriter(new FileWriter(fileListName));
             for (File file : fils) {
                 String[] split = file.getName().split("-");
-                if (split.length != 3) continue;
+                if (split.length != 3) {
+                    continue;
+                }
                 String durationStr = split[2].replace(".mp4", "");
                 Double duration = Double.parseDouble(durationStr)/1000;
                 bw.write("file " + file.getAbsolutePath());
@@ -123,6 +125,9 @@ public class FFmpegExecUtils implements InitializingBean{
                 .done();
 
         double finalDurationAll = durationAll;
+
+        logger.info("开始合并文件，总时长：{}s", finalDurationAll);
+        logger.info("合并文件命令：{}", builder.build());
         FFmpegJob job = executor.createJob(builder, (Progress progress) -> {
             final double duration_ns = finalDurationAll * TimeUnit.SECONDS.toNanos(1);
             double percentage = progress.out_time_ns / duration_ns;
